@@ -29,6 +29,7 @@ var gulp = require('gulp'),
     gulp.task('minifyjs', function() {
         return gulp.src('public/javascripts/**/*.js')      //需要操作的文件
             .pipe(uglify())    //压缩
+            .pipe(rename({suffix: '.min'}))
             //.pipe(rev())
             .pipe(gulp.dest('public/dist/javascripts'));
             //.pipe(rev.manifest())
