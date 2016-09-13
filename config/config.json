@@ -1,0 +1,41 @@
+{ 
+    "serverInfo":{
+        "port":"3000",
+        "url":"http://127.0.0.1",
+        "_comment":"使用的服务和端口号"
+    },
+    "redisConfig":{
+        "host":"118.192.22.167",
+        "post":"6379",
+        "sessionDay":0.04
+    },
+    "webservice":{
+        "url":"http://118.192.22.167:4000/",
+        "_comment":"使用的后端服务"
+    },
+    "roleURL":[
+        
+    ],
+    "staticVersion":{
+        "resourceJsVersion":"1.1.1",
+        "resourceCssVersion":"1.1.2"
+    },
+    "log4js": { 
+        "appenders": [ 
+            {"type": "console", "category": "console"},
+            {
+              "type": "dateFile",
+              "filename": "D:/weblogs/logs/",
+              "pattern": "debug/yyyyMMddhh.txt",
+              "absolute": true,
+              "alwaysIncludePattern": true,   
+              "category": "logInfo"
+            } 
+        ],
+        "levels":{ 
+            "logInfo": "ALL"
+        },
+        "replaceConsole": false
+    },
+    "serverKey":"7584541"
+}
