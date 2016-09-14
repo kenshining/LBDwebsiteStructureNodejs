@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var ejs = require('ejs');
 var config=require('./config/config.json');
+
 //log4jsConfigration
 var log4js = require('log4js');
 log4js.configure(config.log4js);
@@ -31,6 +32,22 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+//connect to redits to configrate session state
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
+// session configerations
+app.use(session({
+  store: new RedisStore({
+    host: config.redisConfig.host,
+    port: config.redisConfig.post
+  }),
+  secret: 'cookie-parser',
+  //session invalid configeration
+  cookie: {maxAge: 60000*60*24*config.redisConfig.sessionDay },
+  resave:true,
+  saveUninitialized:false
+}));
 
 //引用过滤器
 filters(app,logInfo);

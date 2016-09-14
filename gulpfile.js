@@ -12,7 +12,10 @@ var gulp = require('gulp'),
     rev = require('gulp-rev'),
     revReplace = require('gulp-rev-replace'),
     revCollector = require('gulp-rev-collector'),
-    livereload = require('gulp-livereload');
+    livereload = require('gulp-livereload'),
+    gulpScss = require('gulp-sass'),
+    stripCssComments = require('gulp-strip-css-comments'),
+    autoprefixer = require('gulp-autoprefixer');
    
     gulp.task("clean", function(){
         return gulp.src(['public/dist/javascripts','public/dist/stylesheets','public/dist/images'])
@@ -28,6 +31,7 @@ var gulp = require('gulp'),
     //压缩 js
     gulp.task('minifyjs', function() {
         return gulp.src('public/javascripts/**/*.js')      //需要操作的文件
+            .pipe(obfuscate())  //混淆
             .pipe(uglify())    //压缩
             .pipe(rename({suffix: '.min'}))
             //.pipe(rev())
@@ -36,16 +40,25 @@ var gulp = require('gulp'),
             //.pipe(gulp.dest('public/dist/rev'));  //输出
     });
 
-    gulp.task('obfuscate', function () {
-        return gulp.src('public/javascripts/**/*.js')
-        .pipe(obfuscate());
-    });
-
     //压缩图片
     gulp.task('images', function() {
         return gulp.src('public/images/**/*.{png,jpg,gif}')
-        .pipe(cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
+        .pipe(cache(imagemin({ 
+            optimizationLevel: 5, //类型：Number  默认：3  取值范围：0-7（优化等级）  
+            progressive: true, //类型：Boolean 默认：false 无损压缩jpg图片  
+            interlaced: true, //类型：Boolean 默认：false 隔行扫描gif进行渲染  
+            multipass: true //类型：Boolean 默认：false 多次优化svg直到完全优化 
+        })))
         .pipe(gulp.dest('public/dist/images/**/*.{png,jpg,gif}'));
+    });
+
+    //sass监控编译
+    gulp.task('scss-monitor', function() {
+        return gulp.src('sass/**/*.{scss,sass}')
+        .pipe(gulpScss().on('error', gulpScss.logError))
+        .pipe(stripCssComments())// 去掉css注释   
+        .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))// auto prefix 
+        .pipe(gulp.dest('public/stylesheets/**/*'));
     });
 
     //压缩CSS
@@ -70,8 +83,8 @@ var gulp = require('gulp'),
 
     　　//默认命令，在cmd中输入gulp后，执行的就是这个任务(压缩js需要在检查js之后操作)
     gulp.task('default',['clean'],function() {
+        //gulp.start('scss-monitor'),
         gulp.start('minifyjs'),
-        gulp.start('obfuscate'),
         gulp.start('images'),
         gulp.start('cssmin'),
         gulp.start('watch')
@@ -81,4 +94,6 @@ var gulp = require('gulp'),
          gulp.watch('public/stylesheets/**/*.css',['cssmin']);
          gulp.watch('public/javascripts/**/*.js',['jshint','minifyjs']);
          gulp.watch('public/images/**/*.{png,jpg,gif}',['images']);
+         //gulp.watch('sass/**/*.{scss,sass}',['scss-monitor']);
+         
     });
