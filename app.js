@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //connect to redits to configrate session state
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
-// session configerations
+// session configerations 反对撒法撒旦
 app.use(session({
   store: new RedisStore({
     host: config.redisConfig.host,
